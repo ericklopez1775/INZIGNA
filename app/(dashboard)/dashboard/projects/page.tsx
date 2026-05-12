@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Plus, Search, Filter } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import Header from "@/components/layout/Header";
 import GlassCard from "@/components/ui/GlassCard";
 import Button from "@/components/ui/Button";
-import Badge from "@/components/ui/Badge";
 import Modal from "@/components/ui/Modal";
 import ProjectCard from "@/components/dashboard/ProjectCard";
+import { SkeletonProjectCard } from "@/components/ui/Skeleton";
+import { PageWrapper, PageItem } from "@/components/ui/PageWrapper";
 import type { ProjectWithRelations, UserSession } from "@/lib/types";
 import { PROJECT_TYPE_LABELS } from "@/lib/types";
 
@@ -32,7 +33,6 @@ export default function ProjectsPage() {
 
   useEffect(() => {
     fetchProjects();
-    // Get current user from cookie via /api/auth/me (we'll use stored session approach)
     fetch("/api/auth/me").then((r) => r.json()).then((d) => {
       if (d.user) setSession(d.user);
     });
@@ -83,83 +83,89 @@ export default function ProjectsPage() {
   const canCreate = session?.role === "ADMIN" || session?.role === "COLLABORATOR";
 
   return (
-    <div className="p-6 space-y-6 animate-fade-in">
+    <>
       {session && <Header user={session} title="Proyectos" />}
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold text-white">Proyectos</h2>
-          <p className="text-white/40 text-sm">{filtered.length} proyectos encontrados</p>
-        </div>
-        {canCreate && (
-          <Button icon={<Plus size={16} />} onClick={() => setShowModal(true)}>
-            Nuevo Proyecto
-          </Button>
-        )}
-      </div>
-
-      {/* Filters */}
-      <GlassCard padding="sm">
-        <div className="flex flex-wrap gap-3 items-center">
-          <div className="relative flex-1 min-w-48">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
-            <input
-              className="w-full glass-sm rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-brand-red/40"
-              placeholder="Buscar proyectos..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+      <PageWrapper>
+        <PageItem>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-xl md:text-2xl font-semibold text-white">Proyectos</h2>
+              <p className="text-white/40 text-sm">{filtered.length} proyectos encontrados</p>
+            </div>
+            {canCreate && (
+              <Button icon={<Plus size={16} />} onClick={() => setShowModal(true)} size="sm">
+                <span className="hidden sm:inline">Nuevo Proyecto</span>
+                <span className="sm:hidden">Nuevo</span>
+              </Button>
+            )}
           </div>
-          <select
-            className="glass-sm rounded-xl px-3 py-2.5 text-sm text-white/70 outline-none"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="" className="bg-gray-900">Todos los estados</option>
-            {STATUSES.map((s) => (
-              <option key={s} value={s} className="bg-gray-900">{s}</option>
-            ))}
-          </select>
-          <select
-            className="glass-sm rounded-xl px-3 py-2.5 text-sm text-white/70 outline-none"
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-          >
-            <option value="" className="bg-gray-900">Todos los tipos</option>
-            {PROJECT_TYPES.map(([key, label]) => (
-              <option key={key} value={key} className="bg-gray-900">{label}</option>
-            ))}
-          </select>
-        </div>
-      </GlassCard>
+        </PageItem>
 
-      {/* Projects grid */}
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-40 glass rounded-2xl animate-pulse" />
-          ))}
-        </div>
-      ) : filtered.length === 0 ? (
-        <GlassCard className="text-center py-16">
-          <p className="text-white/30 text-lg">Sin proyectos</p>
-          <p className="text-white/20 text-sm mt-1">
-            {canCreate ? "Crea tu primer proyecto" : "No tienes proyectos asignados"}
-          </p>
-        </GlassCard>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((project) => (
-            <ProjectCard key={project.id} project={project} basePath="/dashboard/projects" />
-          ))}
-        </div>
-      )}
+        {/* Filters */}
+        <PageItem>
+          <GlassCard padding="sm">
+            <div className="flex flex-wrap gap-2.5 items-center">
+              <div className="relative flex-1 min-w-40">
+                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
+                <input
+                  className="w-full glass-sm rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-brand-red/40 transition-colors"
+                  placeholder="Buscar proyectos..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+              <select
+                className="glass-sm rounded-xl px-3 py-2.5 text-sm text-white/70 outline-none"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="" className="bg-gray-900">Todos los estados</option>
+                {STATUSES.map((s) => (
+                  <option key={s} value={s} className="bg-gray-900">{s}</option>
+                ))}
+              </select>
+              <select
+                className="glass-sm rounded-xl px-3 py-2.5 text-sm text-white/70 outline-none"
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+              >
+                <option value="" className="bg-gray-900">Todos los tipos</option>
+                {PROJECT_TYPES.map(([key, label]) => (
+                  <option key={key} value={key} className="bg-gray-900">{label}</option>
+                ))}
+              </select>
+            </div>
+          </GlassCard>
+        </PageItem>
+
+        {/* Projects grid */}
+        <PageItem>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, i) => <SkeletonProjectCard key={i} />)}
+            </div>
+          ) : filtered.length === 0 ? (
+            <GlassCard className="text-center py-16">
+              <p className="text-white/30 text-lg">Sin proyectos</p>
+              <p className="text-white/20 text-sm mt-1">
+                {canCreate ? "Crea tu primer proyecto" : "No tienes proyectos asignados"}
+              </p>
+            </GlassCard>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {filtered.map((project) => (
+                <ProjectCard key={project.id} project={project} basePath="/dashboard/projects" />
+              ))}
+            </div>
+          )}
+        </PageItem>
+      </PageWrapper>
 
       {/* Create modal */}
       <Modal open={showModal} onClose={() => setShowModal(false)} title="Nuevo Proyecto" size="lg">
         <form onSubmit={handleCreate} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2">
               <label className="text-sm text-white/60 mb-1.5 block">Título *</label>
               <input
                 className="w-full glass-sm rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 outline-none"
@@ -243,7 +249,7 @@ export default function ProjectsPage() {
                 onChange={(e) => setForm({ ...form, budget: e.target.value })}
               />
             </div>
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="text-sm text-white/60 mb-1.5 block">Descripción</label>
               <textarea
                 className="w-full glass-sm rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 outline-none resize-none"
@@ -264,6 +270,6 @@ export default function ProjectsPage() {
           </div>
         </form>
       </Modal>
-    </div>
+    </>
   );
 }

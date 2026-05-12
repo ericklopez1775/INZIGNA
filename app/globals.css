@@ -60,7 +60,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Liquid Glass base */
+/* ─── Liquid Glass Surfaces ─────────────────────────────── */
+
 .glass {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px) saturate(180%);
@@ -89,36 +90,33 @@ body {
   border: 1px solid rgba(227, 30, 36, 0.25);
 }
 
-/* Glows */
+/* Hover lift — used on interactive cards */
+.glass-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  will-change: transform;
+}
+.glass-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+/* ─── Glow Effects ───────────────────────────────────────── */
+
 .glow-red {
-  box-shadow: 0 0 20px rgba(227, 30, 36, 0.3), 0 0 60px rgba(227, 30, 36, 0.1);
+  box-shadow: 0 0 20px rgba(227, 30, 36, 0.35), 0 0 60px rgba(227, 30, 36, 0.12);
 }
 
 .glow-red-sm {
-  box-shadow: 0 0 10px rgba(227, 30, 36, 0.2);
+  box-shadow: 0 0 10px rgba(227, 30, 36, 0.25);
 }
 
 .text-glow-red {
   text-shadow: 0 0 20px rgba(227, 30, 36, 0.6);
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
+/* ─── Backgrounds ────────────────────────────────────────── */
 
-/* Gradient backgrounds */
+/* Login / auth pages */
 .bg-mesh {
   background:
     radial-gradient(ellipse at 20% 20%, rgba(227, 30, 36, 0.08) 0%, transparent 50%),
@@ -127,25 +125,71 @@ body {
     #060608;
 }
 
-/* Animation utilities */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+/* Dashboard main content background */
+.bg-dashboard {
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(227, 30, 36, 0.05) 0%, transparent 40%),
+    radial-gradient(ellipse at 90% 100%, rgba(227, 30, 36, 0.04) 0%, transparent 40%),
+    #060608;
+  min-height: 100%;
 }
 
-@keyframes pulse-red {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(227, 30, 36, 0); }
-  50% { box-shadow: 0 0 0 6px rgba(227, 30, 36, 0.15); }
+/* ─── Skeleton Loader ────────────────────────────────────── */
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
 }
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.09) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 400px 100%;
+  animation: skeleton-shimmer 1.5s ease infinite;
+  border-radius: 12px;
+}
+
+/* ─── Custom Scrollbar ───────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+/* ─── Animations ─────────────────────────────────────────── */
 
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0);   }
 }
 
 @keyframes slide-in {
   from { opacity: 0; transform: translateX(-16px); }
-  to { opacity: 1; transform: translateX(0); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-20px) scale(1.05); }
+}
+
+@keyframes pulse-orb {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.08); }
 }
 
 .animate-fade-in {
@@ -156,16 +200,26 @@ body {
   animation: slide-in 0.3s ease forwards;
 }
 
-/* Input reset */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-orb {
+  animation: pulse-orb 4s ease-in-out infinite;
+}
+
+/* ─── Input Autofill Reset ───────────────────────────────── */
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
   -webkit-text-fill-color: #f5f5f7;
-  -webkit-box-shadow: 0 0 0px 1000px rgba(15, 15, 18, 0.8) inset;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(15, 15, 18, 0.85) inset;
   transition: background-color 5000s ease-in-out 0s;
 }
 
-/* Selection */
+/* ─── Text Selection ─────────────────────────────────────── */
+
 ::selection {
   background: rgba(227, 30, 36, 0.3);
   color: #f5f5f7;

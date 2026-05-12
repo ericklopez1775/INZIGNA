@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import Sidebar from "@/components/layout/Sidebar";
+import ShellClient from "@/components/layout/ShellClient";
 
 export default async function DashboardLayout({
   children,
@@ -10,12 +10,5 @@ export default async function DashboardLayout({
   const session = await getSession();
   if (!session) redirect("/login");
 
-  return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar user={session} />
-      <main className="flex-1 ml-64 overflow-y-auto bg-mesh">
-        {children}
-      </main>
-    </div>
-  );
+  return <ShellClient user={session}>{children}</ShellClient>;
 }

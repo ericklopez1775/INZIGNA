@@ -17,8 +17,8 @@ const variantClass = {
 const paddingClass = {
   none: "",
   sm: "p-4",
-  md: "p-6",
-  lg: "p-8",
+  md: "p-5 md:p-6",
+  lg: "p-6 md:p-8",
 };
 
 export default function GlassCard({
@@ -35,7 +35,7 @@ export default function GlassCard({
         rounded-2xl
         ${variantClass[variant]}
         ${paddingClass[padding]}
-        ${hover ? "transition-all duration-300 hover:bg-white/8 hover:border-white/20 cursor-pointer" : ""}
+        ${hover ? "glass-lift cursor-pointer" : ""}
         ${className}
       `}
       {...props}
